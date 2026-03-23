@@ -1,0 +1,62 @@
+# @package _global_
+
+datamodule:
+  _target_: datasets.DocREDataModule
+  _partial_: true
+  dataset_dir: F:\CDR_json格式
+  train_file: convert_train.json
+  dev_file: convert_dev.json
+  test_file: convert_test.json
+  force_regeneration: false
+  use_coref: true
+  train_batch_size: 4
+  test_batch_size: 4
+
+model:
+  _target_: model.DocREModel
+  _partial_: true
+  model_name_or_path: ./biobert_base
+  max_seq_length: 1024
+  transformer_type: bert
+  num_reasoning_layers: 7
+  graph_conv:
+    _target_: model.GATGraphConv
+    _partial_: true
+    edge_types: ['d-s', 's-s', 's-m', 'ie/m-m', 'is/m-m']
+    feat_drop: 0.25
+    attn_drop: 0.1
+    residual: false
+    activation:
+      _target_: torch.nn.Tanh
+    num_layers: 2
+  residual: true
+  coref: gated  # gated or e_context
+  num_class: 2
+  block_size: 64
+  reason_type: "criss-cross"
+  ttm_re: true
+  loss_fnt:
+    _target_: losses.AFLoss
+    gamma_pos: 1.0
+    gamma_neg: 1.0
+    num_labels: -1
+
+train:
+  seed: 66
+  epochs: 60
+  log_steps: 100                         # 
+  device: "cuda:0"
+  start_steps: -1
+  evaluation_steps: -1                   # 
+  gradient_accumulation_steps: 1
+  learning_rate: 3e-5
+  classifier_lr: 1e-4
+  lr_schedule: linear # linear or cosine
+  warmup_ratio: 0.06
+  adam_epsilon: 1e-6
+  max_grad_norm: 1.0
+  save_best_path: ./modle
+  save_last_path: null
+
+load_path: null
+load_checkpoint: null
