@@ -7,7 +7,7 @@ datamodule:
   train_file: convert_train.json
   dev_file: convert_dev.json
   test_file: convert_test.json
-  force_regeneration: false
+  force_regeneration: true
   use_coref: true
   train_batch_size: 4
   test_batch_size: 4
@@ -42,8 +42,8 @@ model:
     num_labels: -1
 
 train:
-  seed: 66
-  epochs: 60
+  seed: 88
+  epochs: 30
   log_steps: 100                         # 
   device: "cuda:0"
   start_steps: -1
